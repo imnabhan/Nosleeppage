@@ -1,0 +1,214 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>No Sleep Page</title>
+<style>
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #1e1e1e;
+    text-align: center;
+    padding: 50px;
+    overflow: hidden;
+    color: #ffffff;
+}
+h1 {
+    color: #2e8b57;
+    font-size: 3em;
+    margin-bottom: 20px;
+}
+p {
+    font-size: 1.5em;
+    margin: 20px 0;
+    color: #ffffff;
+}
+.quote {
+    font-style: italic;
+    color: #ffffff;
+    font-size: 1.8em;
+    margin: 30px 0;
+}
+.designer {
+    font-size: 1.2em;
+    color: #ffffff;
+    margin-top: 40px;
+}
+.clock-container {
+    margin: 20px 0;
+}
+.digital-clock {
+    font-size: 2.5em;
+    color: #ffffff;
+    margin: 20px 0;
+}
+.date-display {
+    font-size: 1.5em;
+    color: #ffffff;
+    margin: 20px 0;
+}
+.analog-clock {
+    width: 200px;
+    height: 200px;
+    border: 10px solid #ffffff;
+    border-radius: 50%;
+    position: relative;
+    margin: 0 auto;
+    background: black;
+}
+.hand {
+    position: absolute;
+    background: #ffffff;
+    transform-origin: bottom;
+    bottom: 50%;
+    left: 50%;
+    transform: translateX(-50%);
+}
+.hour-hand {
+    width: 6px;
+    height: 50px;
+    background: #2e8b57;
+    z-index: 3;
+}
+.minute-hand {
+    width: 4px;
+    height: 70px;
+    background: #ffffff;
+    z-index: 2;
+}
+.second-hand {
+    width: 2px;
+    height: 90px;
+    background: red;
+    z-index: 1;
+}
+.snowflake {
+    position: absolute;
+    font-size: 20px;
+    font-family: Arial, sans-serif;
+    color: #ffffff;
+    z-index: 1000;
+}
+</style>
+</head>
+<body>
+<h1>No Sleep Page</h1>
+<p>This page prevents your screen from going to sleep.</p>
+
+<div class="clock-container">
+    <div class="digital-clock" id="digital-clock"></div>
+    <div class="date-display" id="date-display"></div>
+    <div class="analog-clock" id="analog-clock">
+        <div class="hand hour-hand" id="hour-hand"></div>
+        <div class="hand minute-hand" id="minute-hand"></div>
+        <div class="hand second-hand" id="second-hand"></div>
+    </div>
+</div>
+
+<div class="quote">
+    "𝑴𝒂𝒌𝒆 𝒕𝒉𝒆 𝒎𝒐𝒔𝒕 𝒐𝒇 𝒆𝒗𝒆𝒓𝒚 𝒎𝒊𝒏𝒖𝒕𝒆 𝒃𝒓𝒊𝒈𝒉𝒕,<br>
+    𝑼𝒔𝒆 𝒚𝒐𝒖𝒓 𝒕𝒊𝒎𝒆 𝒘𝒊𝒔𝒆𝒍𝒚, 𝒅𝒂𝒚 𝒂𝒏𝒅 𝒏𝒊𝒈𝒉𝒕."
+</div>
+
+<div class="designer">
+    Designed by Nabhan
+</div>
+
+<script>
+let wakeLock = null;
+
+async function requestWakeLock() {
+    try {
+        wakeLock = await navigator.wakeLock.request('screen');
+        console.log('Wake Lock is active');
+    } catch (err) {
+        console.error(`${err.name}, ${err.message}`);
+    }
+}
+
+requestWakeLock();
+
+function keepAwake() {
+    document.title = document.title === "No Sleep Page" ? "Stay Awake!" : "No Sleep Page";
+    requestWakeLock(); // Keep the wake lock alive
+}
+
+// Set an interval to call the keepAwake function every 30 seconds
+setInterval(keepAwake, 30000);
+
+// Also call the function on mouse movement or key press
+document.addEventListener('mousemove', keepAwake);
+document.addEventListener('keypress', keepAwake);
+
+// Snowfall effect
+const snowflakes = [];
+const snowflakeCount = 100;
+const snowflakeSize = 20;
+const snowflakeSpeed = 3;
+
+function createSnowflake() {
+    const snowflake = document.createElement('div');
+    snowflake.className = 'snowflake';
+    snowflake.innerHTML = '&#10052;';
+    snowflake.style.position = 'absolute';
+    snowflake.style.fontSize = `${snowflakeSize}px`;
+    snowflake.style.color = '#ffffff';
+    snowflake.style.zIndex = '1000';
+    snowflake.style.left = `${Math.random() * window.innerWidth}px`;
+    snowflake.style.top = `${Math.random() * -window.innerHeight}px`;
+    document.body.appendChild(snowflake);
+    return snowflake;
+}
+
+for (let i = 0; i < snowflakeCount; i++) {
+    snowflakes.push(createSnowflake());
+}
+
+function animateSnowflakes() {
+    snowflakes.forEach((snowflake) => {
+        const top = parseInt(snowflake.style.top);
+        snowflake.style.top = `${top + snowflakeSpeed}px`;
+        if (top > window.innerHeight) {
+            snowflake.style.top = `${Math.random() * -window.innerHeight}px`;
+            snowflake.style.left = `${Math.random() * window.innerWidth}px`;
+        }
+    });
+    requestAnimationFrame(animateSnowflakes);
+}
+
+animateSnowflakes();
+
+// Clock Functionality
+function updateClock() {
+    const now = new Date();
+    const options = { timeZone: 'Asia/Kolkata', hour12: true, hour: '2-digit', minute: '2-digit', second: '2-digit' };
+    const istTime = now.toLocaleTimeString('en-IN', options);
+    const istDate = now.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+
+    // Update Digital Clock
+    document.getElementById('digital-clock').innerText = istTime;
+
+    // Update Date Display
+    document.getElementById('date-display').innerText = istDate;
+
+    // Update Analog Clock
+    const istDateObj = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }));
+    const seconds = istDateObj.getSeconds();
+    const minutes = istDateObj.getMinutes();
+    const hours = istDateObj.getHours();
+
+    const secondDeg = (seconds / 60) * 360;
+    const minuteDeg = (minutes / 60) * 360 + (seconds / 60) * 6;
+    const hourDeg = ((hours % 12) / 12) * 360 + (minutes / 60) * 30;
+
+    document.getElementById('second-hand').style.transform = `rotate(${secondDeg}deg)`;
+    document.getElementById('minute-hand').style.transform = `rotate(${minuteDeg}deg)`;
+    document.getElementById('hour-hand').style.transform = `rotate(${hourDeg}deg)`;
+}
+
+setInterval(updateClock, 1000);
+updateClock();
+</script>
+</body>
+</html>
