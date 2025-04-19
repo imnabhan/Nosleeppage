@@ -3,7 +3,7 @@
 ---
 
 # 🌙 No Sleep Page 🕒❄️
-![No Sleep Page Banner](./banner.png)
+![No Sleep Page Banner](./Banner.png)
 
 
 A beautifully designed, minimal yet functional **"No Sleep Page"** that prevents your screen from sleeping while displaying both digital and analog clocks, animated snowfall ❄️, and motivational quotes 💭.
